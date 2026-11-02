@@ -95,7 +95,7 @@
         </form>
 
         <div class="footer-text">
-            সিস্টেম ১০০% আপডেট ও প্রস্তুত (ফায়ারবেস ক্লাউড সিঙ্ক এক্টিভ)
+            সিস্টেম ১০০% আপডেট ও প্রস্তুত (ফায়ারবেস রিয়েল-টাইম ক্লাউড সিঙ্ক এক্টিভ)
         </div>
     </div>
 
@@ -200,9 +200,10 @@
         }
         const db = firebase.database();
 
-        // Populate Login Branch Dropdown (3 to 120)
+        // Populate Login Branch Dropdown (1 to 120)
         const loginBranchSelect = document.getElementById('loginBranchSelect');
-        for (let i = 3; i <= 120; i++) {
+        loginBranchSelect.innerHTML = '<option value="">-- শাখা ও কোড সিলেক্ট করুন --</option>';
+        for (let i = 1; i <= 120; i++) {
             let bCode = String(i).padStart(3, '0');
             let opt = document.createElement('option');
             opt.value = bCode;
@@ -223,10 +224,13 @@
             document.getElementById('appViewContainer').style.display = 'block';
 
             populateBranchSelector();
+            
+            // ক্লাউড থেকে রিয়েল-টাইম ডেটা ফেচ ও লাইভ লিসেনার অন করা
             fetchBranchDataFromCloud(() => {
                 initData();
                 setActiveTab(1);
             });
+            listenToCloudChanges();
         }
 
         function logoutSystem() {
@@ -252,6 +256,7 @@
                 initData();
                 setActiveTab(currentYearTab);
             });
+            listenToCloudChanges();
         }
 
         const baseCategories = [
@@ -275,7 +280,7 @@
             };
         }
 
-        // ================= CLOUD SYNC FUNCTIONS (FIREBASE) =================
+        // ================= CLOUD SYNC & REAL-TIME LISTENER FUNCTIONS =================
         function fetchBranchDataFromCloud(callback) {
             let keys = getKeys();
             db.ref(currentBranch).once('value', (snapshot) => {
@@ -290,6 +295,30 @@
             }, (error) => {
                 console.error("Cloud fetch error:", error);
                 if (callback) callback();
+            });
+        }
+
+        // লাইভ লিসেনার: অন্য কোনো কম্পিউটার বা ইউজার থেকে ডেটা পরিবর্তন হলে তা সাথে সাথে স্ক্রিনে আপডেট হবে
+        function listenToCloudChanges() {
+            db.ref(currentBranch).on('value', (snapshot) => {
+                let val = snapshot.val();
+                if (val) {
+                    let keys = getKeys();
+                    let localMaster = localStorage.getItem(keys.master);
+                    let remoteMasterStr = JSON.stringify(val.master || []);
+                    
+                    // যদি ক্লাউডের ডেটা লোকালের চেয়ে আলাদা হয়, তবে লোকাল আপডেট করে পেজ রি-রেন্ডার করবে
+                    if(val.master && localMaster !== remoteMasterStr) {
+                        localStorage.setItem(keys.master, remoteMasterStr);
+                        if (val.meta) localStorage.setItem(keys.meta, JSON.stringify(val.meta));
+                        if (val.products) localStorage.setItem(keys.products, JSON.stringify(val.products));
+                        if (val.disposals) localStorage.setItem(keys.disposals, JSON.stringify(val.disposals));
+                        
+                        if (typeof currentYearTab !== 'undefined') {
+                            setActiveTab(currentYearTab);
+                        }
+                    }
+                }
             });
         }
 
@@ -482,8 +511,19 @@
                 let savedMaster = localStorage.getItem('ccda_master_' + branchKey);
                 let savedDisposals = localStorage.getItem('ccda_disposals_' + branchKey);
                 let savedProducts = localStorage.getItem('ccda_products_' + branchKey);
-                if(!savedMaster) return null;
-                master = JSON.parse(savedMaster);
+                
+                if(!savedMaster) {
+                    master = JSON.parse(JSON.stringify(baseCategories)).map(group => ({
+                        cat: group.cat,
+                        items: group.items.map(itemName => ({
+                            name: itemName, qty: {}, price: '', rate: {}, defaultRate: 10,
+                            newPurchase: {}, overrideCurrDep: {}, overrideYear1PrevVal: '', overrideYear1PrevTotDep: '',
+                            isHidden: {}, isDeleted: {}
+                        }))
+                    }));
+                } else {
+                    master = JSON.parse(savedMaster);
+                }
                 disposals = savedDisposals ? JSON.parse(savedDisposals) : [];
                 products = savedProducts ? JSON.parse(savedProducts) : [];
             }
@@ -713,35 +753,18 @@
             container.innerHTML = html;
         }
 
-        // ================= 100% SECURE & FAST CONSOLIDATED REGISTER =================
+        // ================= 100% INSTANT NON-BLOCKING CONSOLIDATED REGISTER =================
         function renderAllBranchesConsolidatedPage() {
             let container = document.getElementById('tab-container');
-            container.innerHTML = `<div class="text-center py-5"><div class="spinner-border text-success" role="status"></div><h5 class="mt-3 fw-bold text-success">১২০টি শাখার রেজিস্টার ডেটা দ্রুত প্রসেসিং ও সমন্বিত হিসাব করা হচ্ছে...</h5></div>`;
+            container.innerHTML = `<div class="text-center py-5"><div class="spinner-border text-success" role="status"></div><h5 class="mt-3 fw-bold text-success">১২০টি শাখার রিয়েল-টাইম ডেটা ফায়ারবেস থেকে সিঙ্ক ও সমন্বিত হিসাব করা হচ্ছে...</h5></div>`;
 
-            // নন-ব্লকিং টাইমআউট ব্যবহার করা হয়েছে যাতে ব্রাউজার ফ্রেম ড্রপ বা হ্যাং না করে
-            setTimeout(() => {
-                try {
-                    // ফায়ারবেস থেকে একবারে বড় ডেটা ফেচ না করে লোকাল ক্যাশ বা স্টোরেজ দিয়ে সুপার-ফাস্ট রেন্ডার করা হলো
-                    let allCloudData = {};
-                    for(let b=1; b<=120; b++) {
-                        let bCode = b < 10 ? '00' + b : (b < 100 ? '0' + b : b);
-                        let bKey = 'Branch_' + bCode;
-                        let mData = localStorage.getItem('ccda_master_' + bKey);
-                        let pData = localStorage.getItem('ccda_products_' + bKey);
-                        let dData = localStorage.getItem('ccda_disposals_' + bKey);
-                        if(mData) {
-                            allCloudData[bKey] = {
-                                master: JSON.parse(mData),
-                                products: pData ? JSON.parse(pData) : [],
-                                disposals: dData ? JSON.parse(dData) : []
-                            };
-                        }
-                    }
-                    processConsolidatedData(allCloudData);
-                } catch (err) {
-                    processConsolidatedData({});
-                }
-            }, 30);
+            // ফায়ারবেস ডেটাবেসের রুট (Root) থেকে একবারে সব ব্রাঞ্চের লাইভ ডেটা ফেচ করা হচ্ছে যাতে অন্য কম্পিউটারের এন্ট্রি ইনস্ট্যান্ট দেখায়
+            db.ref().once('value', (snapshot) => {
+                let allCloudData = snapshot.val() || {};
+                processConsolidatedData(allCloudData);
+            }, (error) => {
+                processConsolidatedData({});
+            });
         }
 
         function processConsolidatedData(allCloudData) {
@@ -757,10 +780,7 @@
                 if (bData && bData.master) {
                     chain = calculateFullChainForBranch(bKey, bData);
                 } else {
-                    let savedMaster = localStorage.getItem('ccda_master_' + bKey);
-                    if (savedMaster) {
-                        chain = calculateFullChainForBranch(bKey);
-                    }
+                    chain = calculateFullChainForBranch(bKey);
                 }
 
                 let bAssetVal = 0, bDepVal = 0, bWdvVal = 0;
@@ -809,7 +829,7 @@
             let html = `
                 <div class="card border-success shadow-sm mb-4">
                     <div class="card-header bg-success text-white fw-bold d-flex justify-content-between align-items-center">
-                        <span>🏢 ১২০টি শাখার সমন্বিত স্থায়ী সম্পদ ব্যবস্থাপনা রেজিস্টার (All Branches Consolidated Register)</span>
+                        <span>🏢 ১২০টি শাখার রিয়েল-টাইম সমন্বিত স্থায়ী সম্পদ ব্যবস্থাপনা রেজিস্টার (All Branches Consolidated Register)</span>
                     </div>
                     <div class="card-body bg-light">
                         ${yearSelectorHtml}
@@ -878,6 +898,7 @@
                 initData();
                 setActiveTab(1);
             });
+            listenToCloudChanges();
         }
 
         function getProductExactDisposalDetails(productId, disposalYear) {
