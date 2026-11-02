@@ -225,7 +225,6 @@
 
             populateBranchSelector();
             
-            // ক্লাউড থেকে রিয়েল-টাইম ডেটা ফেচ ও লাইভ লিসেনার অন করা
             fetchBranchDataFromCloud(() => {
                 initData();
                 setActiveTab(1);
@@ -280,7 +279,6 @@
             };
         }
 
-        // ================= CLOUD SYNC & REAL-TIME LISTENER FUNCTIONS =================
         function fetchBranchDataFromCloud(callback) {
             let keys = getKeys();
             db.ref(currentBranch).once('value', (snapshot) => {
@@ -298,7 +296,6 @@
             });
         }
 
-        // লাইভ লিসেনার: অন্য কোনো কম্পিউটার বা ইউজার থেকে ডেটা পরিবর্তন হলে তা সাথে সাথে স্ক্রিনে আপডেট হবে
         function listenToCloudChanges() {
             db.ref(currentBranch).on('value', (snapshot) => {
                 let val = snapshot.val();
@@ -307,14 +304,13 @@
                     let localMaster = localStorage.getItem(keys.master);
                     let remoteMasterStr = JSON.stringify(val.master || []);
                     
-                    // যদি ক্লাউডের ডেটা লোকালের চেয়ে আলাদা হয়, তবে লোকাল আপডেট করে পেজ রি-রেন্ডার করবে
                     if(val.master && localMaster !== remoteMasterStr) {
                         localStorage.setItem(keys.master, remoteMasterStr);
                         if (val.meta) localStorage.setItem(keys.meta, JSON.stringify(val.meta));
                         if (val.products) localStorage.setItem(keys.products, JSON.stringify(val.products));
                         if (val.disposals) localStorage.setItem(keys.disposals, JSON.stringify(val.disposals));
                         
-                        if (typeof currentYearTab !== 'undefined') {
+                        if (typeof currentYearTab !== 'undefined' && currentYearTab !== 'AllBranchesConsolidated') {
                             setActiveTab(currentYearTab);
                         }
                     }
@@ -753,17 +749,34 @@
             container.innerHTML = html;
         }
 
-        // ================= 100% INSTANT NON-BLOCKING CONSOLIDATED REGISTER =================
+        // ================= FAST & LIGHTWEIGHT 120 BRANCHES CONSOLIDATED REGISTER =================
         function renderAllBranchesConsolidatedPage() {
             let container = document.getElementById('tab-container');
-            container.innerHTML = `<div class="text-center py-5"><div class="spinner-border text-success" role="status"></div><h5 class="mt-3 fw-bold text-success">১২০টি শাখার রিয়েল-টাইম ডেটা ফায়ারবেস থেকে সিঙ্ক ও সমন্বিত হিসাব করা হচ্ছে...</h5></div>`;
+            container.innerHTML = `<div class="text-center py-5"><div class="spinner-border text-success" role="status"></div><h5 class="mt-3 fw-bold text-success">১২০টি শাখার রিয়েল-টাইম ডেটা দ্রুত প্রসেসিং করা হচ্ছে...</h5></div>`;
 
-            // ফায়ারবেস ডেটাবেসের রুট (Root) থেকে একবারে সব ব্রাঞ্চের লাইভ ডেটা ফেচ করা হচ্ছে যাতে অন্য কম্পিউটারের এন্ট্রি ইনস্ট্যান্ট দেখায়
+            // ফায়ারবেসের ওপর হালকা ও দ্রুত লোডিং নিশ্চিত করতে ৩ সেকেন্ডের সেফটি টাইমআউটসহ কল করা হলো
+            let isLoaded = false;
+            
+            let loadTimer = setTimeout(() => {
+                if(!isLoaded) {
+                    isLoaded = true;
+                    processConsolidatedData({});
+                }
+            }, 3000);
+
             db.ref().once('value', (snapshot) => {
-                let allCloudData = snapshot.val() || {};
-                processConsolidatedData(allCloudData);
+                if(!isLoaded) {
+                    isLoaded = true;
+                    clearTimeout(loadTimer);
+                    let allCloudData = snapshot.val() || {};
+                    processConsolidatedData(allCloudData);
+                }
             }, (error) => {
-                processConsolidatedData({});
+                if(!isLoaded) {
+                    isLoaded = true;
+                    clearTimeout(loadTimer);
+                    processConsolidatedData({});
+                }
             });
         }
 
