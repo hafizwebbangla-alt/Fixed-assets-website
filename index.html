@@ -754,9 +754,7 @@
             let container = document.getElementById('tab-container');
             container.innerHTML = `<div class="text-center py-5"><div class="spinner-border text-success" role="status"></div><h5 class="mt-3 fw-bold text-success">১২০টি শাখার রিয়েল-টাইম ডেটা দ্রুত প্রসেসিং করা হচ্ছে...</h5></div>`;
 
-            // ফায়ারবেসের ওপর হালকা ও দ্রুত লোডিং নিশ্চিত করতে ৩ সেকেন্ডের সেফটি টাইমআউটসহ কল করা হলো
             let isLoaded = false;
-            
             let loadTimer = setTimeout(() => {
                 if(!isLoaded) {
                     isLoaded = true;
