@@ -3,21 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CCDA - সেন্ট্রাল ফিক্সড অ্যাসেট রেজিস্টার ও লগইন সিস্টেম</title>
+    <title>CCDA - সেন্ট্রাল ফিক্সড অ্যাসেট রেজিস্টার সিস্টেম</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .login-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 380px; text-align: center; border-top: 5px solid #28a745; }
-        .login-container h2 { color: #333; margin-bottom: 5px; font-size: 22px; }
-        .login-container p { color: #666; font-size: 14px; margin-bottom: 25px; }
-        .form-group { text-align: left; margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; color: #444; font-weight: bold; font-size: 14px; }
-        .form-group select, .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
-        .login-btn { width: 100%; padding: 12px; background-color: #28a745; border: none; color: white; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
-        .login-btn:hover { background-color: #218838; }
-        .footer-text { margin-top: 20px; font-size: 12px; color: #888; }
-
         .app-body { background-color: #f4f7f6; font-family: 'SolaimanLipi', Arial, sans-serif; color: #000; }
         .app-container { max-width: 1800px; margin: 30px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         .header-title { text-align: center; margin-bottom: 20px; }
@@ -62,110 +51,70 @@
         }
     </style>
 </head>
-<body id="mainBody" class="login-body">
+<body id="mainBody" class="app-body">
 
     <!-- এমবেডেড ডেটা হোল্ডার -->
     <script id="embeddedDataStore" type="application/json">/*EMBEDDED_DATA_PLACEHOLDER*/</script>
 
-    <!-- LOGIN VIEW CONTAINER -->
-    <div id="loginViewContainer" class="login-container">
-        <h2>CCDA SMART Fixed Assets Register</h2>
-        <p>স্থাবর সম্পত্তি ব্যবস্থাপনা সিস্টেম (১২০ শাখা ও হেড অফিস)</p>
-        
-        <form onsubmit="handleLoginSubmit(event)">
-            <div class="form-group">
-                <label for="loginBranchSelect">শাখা বা হেড অফিস নির্বাচন করুন:</label>
-                <select id="loginBranchSelect" name="branch_code" required>
-                    <option value="">-- অপশন সিলেক্ট করুন --</option>
-                    <option value="00">Head Office (00) - অ্যাডমিন প্যানেল</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="username">ইউজার আইডি (User ID):</label>
-                <input type="text" id="username" name="username" placeholder="উদা: branch001 বা admin" required>
-            </div>
-
-            <div class="form-group">
-                <label for="password">পাসওয়ার্ড:</label>
-                <input type="password" id="password" name="password" placeholder="পাসওয়ার্ড দিন" required>
-            </div>
-
-            <button type="submit" class="login-btn">সিস্টেমে প্রবেশ করুন (Login)</button>
-        </form>
-
-        <div class="footer-text">
-            সিস্টেম ১০০% আপডেট ও প্রস্তুত (১২০ ব্রাঞ্চ ও হেড অফিস সেন্ট্রাল সিঙ্ক এক্টিভ)
+    <!-- MAIN APP CONTAINER -->
+    <div class="app-container">
+        <div class="header-title no-print">
+            <h3 class="fw-bold ccda-main-title">Centre for Community Development Assistance (CCDA)</h3>
+            <p class="ccda-sub-title mb-1">House-1/8, Block-G, Lalmatia Housing Estate, Dhaka-1207, Bangladesh</p>
+            <h5 class="text-uppercase page-heading" id="pageTitleHeading">Fixed Assets Register</h5>
         </div>
-    </div>
 
-    <!-- MAIN APP VIEW CONTAINER -->
-    <div id="appViewContainer" style="display: none;" class="w-100">
-        <div class="app-container">
-            <div class="header-title no-print">
-                <h3 class="fw-bold ccda-main-title">Centre for Community Development Assistance (CCDA)</h3>
-                <p class="ccda-sub-title mb-1">House-1/8, Block-G, Lalmatia Housing Estate, Dhaka-1207, Bangladesh</p>
-                <h5 class="text-uppercase page-heading" id="pageTitleHeading">Fixed Assets Register</h5>
+        <div class="notice-board no-print">
+            <span class="notice-title">📢 নোটিশ বোর্ড</span>
+            <marquee behavior="scroll" direction="left" class="notice-marquee">
+                বিশেষ প্রয়োজনে Md. Hafizur Rahman (01734251323) নম্বরে যোগাযোগ করুন। 
+            </marquee>
+        </div>
+
+        <div id="syncStatus" class="alert alert-secondary py-1 px-3 mb-3 no-print text-center fw-bold" style="font-size: 12px;">
+            🟢 সিস্টেম ১০০% আপডেট ও প্রস্তুত
+        </div>
+
+        <div class="row mb-4 no-print bg-light p-3 rounded border">
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Name Of Branch & Code:</label>
+                <input type="text" id="branchName" class="form-control bg-white text-dark" value="Branch --" oninput="updateMetaInfo('branchName', this.value)">
             </div>
-
-            <div class="notice-board no-print">
-                <span class="notice-title">📢 নোটিশ বোর্ড</span>
-                <marquee behavior="scroll" direction="left" class="notice-marquee">
-                    বিশেষ প্রয়োজনে Md. Hafizur Rahman (01734251323) নম্বরে যোগাযোগ করুন। 
-                </marquee>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Financial Year:</label>
+                <input type="text" id="finYear" class="form-control bg-white text-dark" value="2026-2027" oninput="updateMetaInfo('finYear', this.value)">
             </div>
-
-            <div id="syncStatus" class="alert alert-secondary py-1 px-3 mb-3 no-print text-center fw-bold" style="font-size: 12px;">
-                🟢 সিস্টেম ১০০% আপডেট ও প্রস্তুত
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Duration:</label>
+                <input type="text" id="duration" class="form-control bg-white text-dark" value="01/07/2026 To 30/06/2027" oninput="updateMetaInfo('duration', this.value)">
             </div>
+        </div>
 
-            <div class="row mb-4 no-print bg-light p-3 rounded border" id="topControlPanelRow">
-                <div class="col-md-3" id="headOfficeSelectorWrapper" style="display: none;">
-                    <label class="form-label fw-bold text-danger">Head Office: Select Branch (001 to 120):</label>
-                    <select id="branchSelector" class="form-select bg-white text-dark fw-bold border-danger" onchange="changeBranchCode(this.value)">
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-bold">Name Of Branch & Code:</label>
-                    <input type="text" id="branchName" class="form-control bg-white text-dark" value="Branch --" oninput="updateMetaInfo('branchName', this.value)">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-bold">Financial Year:</label>
-                    <input type="text" id="finYear" class="form-control bg-white text-dark" value="2026-2027" oninput="updateMetaInfo('finYear', this.value)">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-bold">Duration:</label>
-                    <input type="text" id="duration" class="form-control bg-white text-dark" value="01/07/2026 To 30/06/2027" oninput="updateMetaInfo('duration', this.value)">
-                </div>
+        <!-- Year Tabs -->
+        <ul class="nav nav-pills mb-4 no-print gap-1 align-items-center" id="yearTabsList" role="tablist">
+        </ul>
+
+        <div class="mb-3 no-print d-flex justify-content-between action-toolbar">
+            <div>
+                <button class="btn btn-success btn-sm fw-bold me-1" onclick="addRow(0)">+ আসবাবপত্র সারি</button>
+                <button class="btn btn-success btn-sm fw-bold me-1" onclick="addRow(1)">+ ইকুইপমেন্ট সারি</button>
+                <button class="btn btn-success btn-sm fw-bold" onclick="addRow(2)">+ কম্পিউটার সারি</button>
             </div>
-
-            <!-- Year Tabs -->
-            <ul class="nav nav-pills mb-4 no-print gap-1 align-items-center" id="yearTabsList" role="tablist">
-            </ul>
-
-            <div class="mb-3 no-print d-flex justify-content-between action-toolbar">
-                <div>
-                    <button class="btn btn-success btn-sm fw-bold me-1" onclick="addRow(0)">+ আসবাবপত্র সারি</button>
-                    <button class="btn btn-success btn-sm fw-bold me-1" onclick="addRow(1)">+ ইকুইপমেন্ট সারি</button>
-                    <button class="btn btn-success btn-sm fw-bold" onclick="addRow(2)">+ কম্পিউটার সারি</button>
-                </div>
-                <div>
-                    <button class="btn btn-warning btn-sm fw-bold me-2 text-dark" onclick="unhideAllRows()">👁️ Show All (Unhide All)</button>
-                    <button class="btn btn-info btn-sm fw-bold me-2 text-white" onclick="refreshData()">⚡ Data Refresh</button>
-                    <button class="btn btn-danger btn-sm fw-bold me-2" onclick="resetAllData()">🔄 সব ডেটা রিসেট করুন</button>
-                    <button class="btn btn-success btn-sm fw-bold me-2" onclick="saveDraft()">💾 ফাইল ডেটাসহ সেভ করুন (Download)</button>
-                    <button class="btn btn-secondary btn-sm fw-bold me-2" onclick="window.print()">🖨️ প্রিন্ট করুন (Legal Page)</button>
-                    <button class="btn btn-dark btn-sm fw-bold" onclick="logoutSystem()">🚪 লগআউট</button>
-                </div>
+            <div>
+                <button class="btn btn-warning btn-sm fw-bold me-2 text-dark" onclick="unhideAllRows()">👁️ Show All (Unhide All)</button>
+                <button class="btn btn-info btn-sm fw-bold me-2 text-white" onclick="refreshData()">⚡ Data Refresh</button>
+                <button class="btn btn-danger btn-sm fw-bold me-2" onclick="resetAllData()">🔄 সব ডেটা রিসেট করুন</button>
+                <button class="btn btn-success btn-sm fw-bold me-2" onclick="saveDraft()">💾 ফাইল ডেটাসহ সেভ করুন (Download)</button>
+                <button class="btn btn-secondary btn-sm fw-bold me-2" onclick="window.print()">🖨️ প্রিন্ট করুন (Legal Page)</button>
             </div>
+        </div>
 
-            <div id="tab-container"></div>
+        <div id="tab-container"></div>
 
-            <div class="signature-section">
-                <div class="signature-box">Prepared by</div>
-                <div class="signature-box">Checked by</div>
-                <div class="signature-box">Approved by</div>
-            </div>
+        <div class="signature-section">
+            <div class="signature-box">Prepared by</div>
+            <div class="signature-box">Checked by</div>
+            <div class="signature-box">Approved by</div>
         </div>
     </div>
 
@@ -192,15 +141,6 @@
             }
         }, { passive: true });
 
-        const loginBranchSelect = document.getElementById('loginBranchSelect');
-        for (let i = 1; i <= 120; i++) {
-            let bCode = String(i).padStart(3, '0');
-            let opt = document.createElement('option');
-            opt.value = bCode;
-            opt.textContent = 'Branch ' + (i < 10 ? '0' + i : i) + ' (Code: ' + bCode + ')';
-            loginBranchSelect.appendChild(opt);
-        }
-
         function getYearMetaInfo(yearIndex) {
             let startYear = 2026 + (yearIndex - 1);
             let endYear = startYear + 1;
@@ -211,8 +151,7 @@
             return { finYear: finYear, duration: duration, tabDisplayName: tabDisplayName };
         }
 
-        let currentBranch = 'Branch_001';
-        let currentUserRole = 'branch';
+        const currentBranch = 'Branch_Single';
 
         function initYearTabs() {
             let tabsContainer = document.getElementById('yearTabsList');
@@ -227,87 +166,10 @@
             tabsHtml += '<li class="nav-item" role="presentation"><button class="nav-link bg-info text-dark fw-bold px-3 py-1 mb-1" data-bs-toggle="tab" data-bs-target="#tab-container" type="button" onclick="setActiveTab(\'IdWiseDepreciationRegister\')">📊 আইডি ভিত্তিক অবচয় রেজিস্টার</button></li>';
             tabsHtml += '<li class="nav-item" role="presentation"><button class="nav-link bg-danger text-white fw-bold px-3 py-1 mb-1" data-bs-toggle="tab" data-bs-target="#tab-container" type="button" onclick="setActiveTab(\'DisposalManager\')">🔴 সম্পদ বাতিল মডিউল</button></li>';
             tabsHtml += '<li class="nav-item" role="presentation"><button class="nav-link bg-warning text-dark fw-bold px-3 py-1 mb-1" data-bs-toggle="tab" data-bs-target="#tab-container" type="button" onclick="setActiveTab(\'Top\')">Summary Report</button></li>';
-            
-            if (currentUserRole === 'head_office') {
-                tabsHtml += '<li class="nav-item" role="presentation" id="consolidatedTabLi"><button class="nav-link bg-success text-white fw-bold px-3 py-1 mb-1" data-bs-toggle="tab" data-bs-target="#tab-container" type="button" onclick="setActiveTab(\'AllBranchesConsolidated\')">🏢 ১২০ ব্রাঞ্চ সেন্ট্রাল রেজিস্টার</button></li>';
-            }
-
             tabsHtml += '<li class="nav-item" role="presentation"><button class="nav-link bg-secondary text-white fw-bold px-3 py-1 mb-1" data-bs-toggle="tab" data-bs-target="#tab-container" type="button" onclick="setActiveTab(\'RestoreBin\')">♻️ Deleted Items Restore</button></li>';
             tabsContainer.innerHTML = tabsHtml;
         }
         initYearTabs();
-
-        function handleLoginSubmit(e) {
-            e.preventDefault();
-            let selectedCode = loginBranchSelect.value;
-            let usernameInput = document.getElementById('username').value.trim();
-            let passwordInput = document.getElementById('password').value.trim();
-
-            if(!selectedCode) return alert('দয়া করে শাখা বা হেড অফিস নির্বাচন করুন!');
-
-            if(selectedCode === '00') {
-                if(usernameInput === 'admin' && passwordInput === '000') {
-                    currentUserRole = 'head_office';
-                    currentBranch = 'Branch_001';
-                } else {
-                    return alert('সঠিক ইউজার আইডি ও পাসওয়ার্ড দিন।');
-                }
-            } else {
-                let expectedUsername = 'branch' + selectedCode;
-                if(usernameInput === expectedUsername && passwordInput === '123') {
-                    currentUserRole = 'branch';
-                    currentBranch = 'Branch_' + selectedCode;
-                } else {
-                    return alert('এই শাখার জন্য সঠিক ইউজার আইডি ও পাসওয়ার্ড দিন।');
-                }
-            }
-            
-            document.getElementById('mainBody').className = 'app-body';
-            document.getElementById('loginViewContainer').style.display = 'none';
-            document.getElementById('appViewContainer').style.display = 'block';
-
-            let hoWrapper = document.getElementById('headOfficeSelectorWrapper');
-            let branchSelectorEl = document.getElementById('branchSelector');
-            if(currentUserRole === 'head_office') {
-                hoWrapper.style.display = 'block';
-                populateBranchSelector();
-                branchSelectorEl.disabled = false;
-                branchSelectorEl.value = currentBranch;
-            } else {
-                hoWrapper.style.display = 'none';
-            }
-
-            initYearTabs();
-            initData();
-            setActiveTab(1);
-        }
-
-        function logoutSystem() {
-            currentUserRole = 'branch';
-            document.getElementById('mainBody').className = 'login-body';
-            document.getElementById('appViewContainer').style.display = 'none';
-            document.getElementById('loginViewContainer').style.display = 'block';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            loginBranchSelect.value = '';
-        }
-
-        function populateBranchSelector() {
-            let select = document.getElementById('branchSelector');
-            let html = '';
-            for(let b=1; b<=120; b++) {
-                let bCode = String(b).padStart(3, '0');
-                html += '<option value="Branch_' + bCode + '">Branch ' + b + ' (Code: ' + bCode + ') - CCDA</option>';
-            }
-            select.innerHTML = html;
-            select.value = currentBranch;
-        }
-
-        function changeBranchCode(bVal) {
-            currentBranch = bVal;
-            initData();
-            setActiveTab(currentYearTab);
-        }
 
         const baseCategories = [
             { cat: 'আসবাবপত্র মোটঃ', items: [
@@ -353,14 +215,13 @@
                 let meta = {};
                 for (let i = 1; i <= 20; i++) {
                     let yInfo = getYearMetaInfo(i);
-                    meta[i] = { branchName: currentBranch, finYear: yInfo.finYear, duration: yInfo.duration };
+                    meta[i] = { branchName: "CCDA Branch Office", finYear: yInfo.finYear, duration: yInfo.duration };
                 }
                 meta['Top'] = meta[1];
                 meta['DisposalManager'] = meta[1];
                 meta['RestoreBin'] = meta[1];
                 meta['ProductSubSheet'] = meta[1];
                 meta['IdWiseDepreciationRegister'] = meta[1];
-                meta['AllBranchesConsolidated'] = meta[1];
                 localStorage.setItem(keys.meta, JSON.stringify(meta));
             }
 
@@ -385,7 +246,7 @@
         function autoSaveNotification() {
             let statusDiv = document.getElementById('syncStatus');
             if(statusDiv) {
-                statusDiv.innerHTML = "💾 " + currentBranch + " এর ডেটা স্বয়ংক্রিয়ভাবে সেভ হয়েছে";
+                statusDiv.innerHTML = "💾 ডেটা স্বয়ংক্রিয়ভাবে সেভ হয়েছে";
                 setTimeout(() => {
                     statusDiv.innerHTML = "🟢 সিস্টেম ১০০% আপডেট ও প্রস্তুত";
                 }, 2500);
@@ -478,11 +339,6 @@
         let currentProductFilter = 'all';
 
         function setActiveTab(tab) {
-            if (tab === 'AllBranchesConsolidated' && currentUserRole !== 'head_office') {
-                alert('দুঃখিত! এই অপশনটি শুধুমাত্র হেড অফিস এডমিন ইউজারের জন্য সংরক্ষিত।');
-                return;
-            }
-
             currentYearTab = tab;
             const toolbar = document.querySelector('.action-toolbar');
             const heading = document.getElementById('pageTitleHeading');
@@ -494,12 +350,12 @@
                 if(!meta[tab]) meta[tab] = {};
                 meta[tab].finYear = yInfo.finYear;
                 meta[tab].duration = yInfo.duration;
-                if(!meta[tab].branchName) meta[tab].branchName = currentBranch;
+                if(!meta[tab].branchName) meta[tab].branchName = "CCDA Branch Office";
                 saveMetaData(meta);
             }
 
             if(!meta[tab]) {
-                meta[tab] = meta[1] || { branchName: currentBranch, finYear: "2026-2027", duration: "01/07/2026 To 30/06/2027" };
+                meta[tab] = meta[1] || { branchName: "CCDA Branch Office", finYear: "2026-2027", duration: "01/07/2026 To 30/06/2027" };
                 saveMetaData(meta);
             }
 
@@ -509,27 +365,23 @@
 
             if (tab === 'Top') {
                 toolbar.style.display = 'none';
-                heading.innerText = 'Fixed Assets Register - Summary Report (' + currentBranch + ')';
+                heading.innerText = 'Fixed Assets Register - Summary Report';
                 renderTopSheet();
-            } else if (tab === 'AllBranchesConsolidated') {
-                toolbar.style.display = 'none';
-                heading.innerText = '🏢 120 Branches Central Consolidated Assets Register';
-                renderAllBranchesConsolidatedPage();
             } else if (tab === 'DisposalManager') {
                 toolbar.style.display = 'none';
-                heading.innerText = 'Asset Disposal Manager & Real-time Auto Journals (' + currentBranch + ')';
+                heading.innerText = 'Asset Disposal Manager & Real-time Auto Journals';
                 renderDisposalManagerPage();
             } else if (tab === 'RestoreBin') {
                 toolbar.style.display = 'none';
-                heading.innerText = 'Deleted Items Restore Bin (' + currentBranch + ')';
+                heading.innerText = 'Deleted Items Restore Bin';
                 renderRestoreBinPage();
             } else if (tab === 'ProductSubSheet') {
                 toolbar.style.display = 'none';
-                heading.innerText = 'Product Entry Sub-Sheet (' + currentBranch + ')';
+                heading.innerText = 'Product Entry Sub-Sheet';
                 renderProductSubSheetPage(currentProductFilter);
             } else if (tab === 'IdWiseDepreciationRegister') {
                 toolbar.style.display = 'none';
-                heading.innerText = 'ID-wise Depreciation Register (' + currentBranch + ')';
+                heading.innerText = 'ID-wise Depreciation Register';
                 renderIdWiseDepreciationRegisterPage();
             } else if (tab === 'ItemDetailModal') {
                 toolbar.style.display = 'none';
@@ -537,7 +389,7 @@
             } else {
                 toolbar.style.display = 'flex';
                 let yInfo = getYearMetaInfo(tab);
-                heading.innerText = 'Fixed Assets Register - ' + currentBranch + ' (' + yInfo.tabDisplayName + ')';
+                heading.innerText = 'Fixed Assets Register (' + yInfo.tabDisplayName + ')';
                 renderYearRegister(tab);
             }
         }
@@ -555,10 +407,11 @@
             return rounded === 0 ? '' : rounded;
         }
 
-        function calculateFullChainForBranch(branchKey) {
-            let savedMaster = localStorage.getItem('ccda_master_' + branchKey);
-            let savedDisposals = localStorage.getItem('ccda_disposals_' + branchKey);
-            let savedProducts = localStorage.getItem('ccda_products_' + branchKey);
+        function calculateFullChain() {
+            syncProductsToMaster();
+            let savedMaster = localStorage.getItem(getKeys().master);
+            let savedDisposals = localStorage.getItem(getKeys().disposals);
+            let savedProducts = localStorage.getItem(getKeys().products);
             if(!savedMaster) return null;
 
             let master = JSON.parse(savedMaster);
@@ -715,11 +568,6 @@
             return yearlyCalculations;
         }
 
-        function calculateFullChain() {
-            syncProductsToMaster();
-            return calculateFullChainForBranch(currentBranch);
-        }
-
         function openItemDetailModal(gIdx, iIdx, yearNum) {
             currentYearTab = 'ItemDetailModal';
             let container = document.getElementById('tab-container');
@@ -768,7 +616,7 @@
 
             container.innerHTML = '<div class="card border-primary shadow-sm mb-4">' +
                 '<div class="card-header bg-primary text-white fw-bold d-flex justify-content-between align-items-center">' +
-                    '<span>🔍 সক্রিয় মজুদ প্রডাক্ট তালিকা: [' + catName + '] ' + item.name + ' (' + yInfo.tabDisplayName + ') - [' + currentBranch + ']</span>' +
+                    '<span>🔍 সক্রিয় মজুদ প্রডাক্ট তালিকা: [' + catName + '] ' + item.name + ' (' + yInfo.tabDisplayName + ')</span>' +
                     '<button class="btn btn-light btn-sm fw-bold text-primary" onclick="setActiveTab(' + yearNum + ')">⬅️ রেজিস্টারে ফিরে যান</button>' +
                 '</div>' +
                 '<div class="card-body bg-light">' +
@@ -785,106 +633,12 @@
             '</div>';
         }
 
-        function renderAllBranchesConsolidatedPage() {
-            if (currentUserRole !== 'head_office') {
-                alert('অনুমোদিত নয়!');
-                setActiveTab(1);
-                return;
-            }
-
-            let container = document.getElementById('tab-container');
-            let branchTotals = [];
-
-            for(let b=1; b<=120; b++) {
-                let bCode = String(b).padStart(3, '0');
-                let bKey = 'Branch_' + bCode;
-                let chain = calculateFullChainForBranch(bKey);
-
-                let bAssetVal = 0, bDepVal = 0, bWdvVal = 0;
-                if(chain) {
-                    let targetYearIdx = (typeof currentConsolidatedYear !== 'undefined' ? currentConsolidatedYear : 1) - 1;
-                    let yearData = chain[targetYearIdx] || chain[0];
-                    yearData.forEach(group => {
-                        group.items.forEach(item => {
-                            bAssetVal += (item.price !== '' ? Math.round(parseFloat(item.price)) : 0);
-                            bDepVal += (item.cumDep !== '' ? Math.round(parseFloat(item.cumDep)) : 0);
-                            bWdvVal += (item.currVal !== '' ? Math.round(parseFloat(item.currVal)) : 0);
-                        });
-                    });
-                }
-                branchTotals.push({ bCode: bCode, bKey: bKey, bAssetVal: bAssetVal, bDepVal: bDepVal, bWdvVal: bWdvVal });
-            }
-
-            let totalSum = 0, totalDepSum = 0, totalWdvSum = 0;
-            let rowsHtml = branchTotals.map((bt, idx) => {
-                totalSum += bt.bAssetVal;
-                totalDepSum += bt.bDepVal;
-                totalWdvSum += bt.bWdvVal;
-                return '<tr>' +
-                    '<td>' + (idx + 1) + '</td>' +
-                    '<td class="fw-bold text-primary">Branch Code: ' + bt.bCode + '</td>' +
-                    '<td>৳' + bt.bAssetVal.toLocaleString() + '</td>' +
-                    '<td>৳' + bt.bDepVal.toLocaleString() + '</td>' +
-                    '<td>৳' + bt.bWdvVal.toLocaleString() + '</td>' +
-                    '<td><button class="btn btn-outline-primary btn-sm fw-bold" onclick="switchBranchFromHO(\'' + bt.bKey + '\')">এই শাখার রেজিস্টারে যান</button></td>' +
-                '</tr>';
-            }).join('');
-
-            let yearOptionsHtml = '';
-            for(let i=1; i<=20; i++) {
-                let sel = (typeof currentConsolidatedYear !== 'undefined' && currentConsolidatedYear === i) ? 'selected' : '';
-                yearOptionsHtml += '<option value="' + i + '" ' + sel + '>' + getYearMetaInfo(i).tabDisplayName + '</option>';
-            }
-
-            let yearSelectorHtml = '<div class="row mb-3 align-items-center">' +
-                '<div class="col-md-4">' +
-                    '<label class="form-label fw-bold">সমন্বিত রিপোর্টের বছর সিলেক্ট করুন:</label>' +
-                    '<select id="consolidatedYearSelect" class="form-select fw-bold border-success" onchange="changeConsolidatedYear(this.value)">' + yearOptionsHtml + '</select>' +
-                '</div>' +
-            '</div>';
-
-            container.innerHTML = '<div class="card border-success shadow-sm mb-4">' +
-                '<div class="card-header bg-success text-white fw-bold">' +
-                    '<span>🏢 ১২০টি শাখার সমন্বিত স্থায়ী সম্পদ ব্যবস্থাপনা রেজিস্টার (Head Office Central View)</span>' +
-                '</div>' +
-                '<div class="card-body bg-light">' +
-                    yearSelectorHtml +
-                    '<div class="row mb-4">' +
-                        '<div class="col-md-4"><div class="p-3 bg-white border rounded shadow-sm text-center"><h6 class="text-muted mb-1">মোট সম্পদ মূল্য:</h6><h4 class="fw-bold text-success">৳' + totalSum.toLocaleString() + '</h4></div></div>' +
-                        '<div class="col-md-4"><div class="p-3 bg-white border rounded shadow-sm text-center"><h6 class="text-muted mb-1">মোট ক্রমপুঞ্জীভূত অবচয়:</h6><h4 class="fw-bold text-danger">৳' + totalDepSum.toLocaleString() + '</h4></div></div>' +
-                        '<div class="col-md-4"><div class="p-3 bg-white border rounded shadow-sm text-center"><h6 class="text-muted mb-1">মোট বর্তমান WDV মূল্য:</h6><h4 class="fw-bold text-primary">৳' + totalWdvSum.toLocaleString() + '</h4></div></div>' +
-                    '</div>' +
-                    '<div class="table-responsive">' +
-                        '<table class="table table-bordered align-middle text-center bg-white">' +
-                            '<thead class="table-secondary"><tr><th>ক্রমিক</th><th>ব্রাঞ্চ কোড</th><th>মোট সম্পদের মূল্য (TK.)</th><th>মোট অবচয় (TK.)</th><th>বর্তমান WDV (TK.)</th><th>অ্যাকশন</th></tr></thead>' +
-                            '<tbody>' + rowsHtml + '</tbody>' +
-                            '<tfoot><tr class="table-success fw-bold"><td colspan="2" class="text-end">সর্বমোট (১২০ শাখা মিলে):</td><td>৳' + totalSum.toLocaleString() + '</td><td>৳' + totalDepSum.toLocaleString() + '</td><td>৳' + totalWdvSum.toLocaleString() + '</td><td>-</td></tr></tfoot>' +
-                        '</table>' +
-                    '</div>' +
-                '</div>' +
-            '</div>';
-        }
-
-        let currentConsolidatedYear = 1;
-        function changeConsolidatedYear(yr) {
-            currentConsolidatedYear = parseInt(yr);
-            renderAllBranchesConsolidatedPage();
-        }
-
-        function switchBranchFromHO(bKey) {
-            currentBranch = bKey;
-            let sel = document.getElementById('branchSelector');
-            if(sel) sel.value = bKey;
-            initData();
-            setActiveTab(1);
-        }
-
-        function calculateSingleProductSchedule(p, disposals, branchKey) {
+        function calculateSingleProductSchedule(p, disposals) {
             let pStartYear = parseInt(p.yearNum) || 1;
             let initialCost = (p.entryType === 'old_purchase') ? (parseFloat(p.openingWdv||0) + parseFloat(p.openingAccDep||0)) : parseFloat(p.price||0);
             let initialOpeningAccDep = (p.entryType === 'old_purchase') ? parseFloat(p.openingAccDep||0) : 0;
             
-            let master = JSON.parse(localStorage.getItem('ccda_master_' + branchKey) || '[]');
+            let master = getMasterData();
             let gIdx = parseInt(p.gIdx), iIdx = parseInt(p.iIdx);
             let defaultRate = (gIdx === 2) ? 25 : 10;
             
@@ -941,7 +695,7 @@
             let p = products.find(item => item.productId === productId);
             if(!p) return { cost: 0, accDep: 0, loss: 0 };
 
-            let scheduleData = calculateSingleProductSchedule(p, disposals, currentBranch);
+            let scheduleData = calculateSingleProductSchedule(p, disposals);
             let targetYearEntry = scheduleData.schedule.find(s => s.year === disposalYear);
 
             let totalCost = Math.round(scheduleData.initialCost);
@@ -1036,7 +790,7 @@
             container.innerHTML = '<div class="row">' +
                 '<div class="col-md-6">' +
                     '<div class="card border-danger shadow-sm mb-4">' +
-                        '<div class="card-header bg-danger text-white fw-bold"><span>🔴 সম্পদ বাতিল করুন (Disposal Entry Form) - [' + currentBranch + ']</span></div>' +
+                        '<div class="card-header bg-danger text-white fw-bold"><span>🔴 সম্পদ বাতিল করুন (Disposal Entry Form)</span></div>' +
                         '<div class="card-body bg-light">' +
                             '<form onsubmit="handleDisposalSubmit(event)">' +
                                 '<div class="mb-3"><label class="form-label fw-bold">প্রডাক্ট আইডি সিলেক্ট করুন:</label><select id="disposalProductId" class="form-select editable-cell fw-bold" required onchange="onDisposalProductSelect(this)">' + productOptions + '</select></div>' +
@@ -1180,7 +934,7 @@
 
             container.innerHTML = '<div class="card border-primary shadow-sm mb-4">' +
                 '<div class="card-header bg-primary text-white fw-bold d-flex justify-content-between align-items-center">' +
-                    '<span>📦 প্রডাক্ট এন্ট্রি সাব-সিট (Product Entry Sub-Sheet) - [' + currentBranch + ']</span>' +
+                    '<span>📦 প্রডাক্ট এন্ট্রি সাব-সিট (Product Entry Sub-Sheet)</span>' +
                     '<button class="btn btn-light btn-sm fw-bold text-primary" onclick="addProductRow()">+ নতুন প্রডাক্ট এন্ট্রি যোগ করুন</button>' +
                 '</div>' +
                 '<div class="card-body bg-light">' +
@@ -1204,7 +958,7 @@
             products.forEach(p => {
                 let mGroup = master[p.gIdx];
                 let assetName = (mGroup && mGroup.items[p.iIdx]) ? mGroup.items[p.iIdx].name : 'অজানা সম্পদ';
-                let scheduleData = calculateSingleProductSchedule(p, disposals, currentBranch);
+                let scheduleData = calculateSingleProductSchedule(p, disposals);
 
                 let schedRows = '';
                 scheduleData.schedule.forEach(s => {
@@ -1233,7 +987,7 @@
                 '</div>';
             });
 
-            container.innerHTML = '<div class="card border-info shadow-sm mb-4"><div class="card-header bg-info text-dark fw-bold">📊 আইডি ভিত্তিক অবচয় রেজিস্টার - [' + currentBranch + ']</div><div class="card-body bg-light">' + productSchedulesHtml + '</div></div>';
+            container.innerHTML = '<div class="card border-info shadow-sm mb-4"><div class="card-header bg-info text-dark fw-bold">📊 আইডি ভিত্তিক অবচয় রেজিস্টার</div><div class="card-body bg-light">' + productSchedulesHtml + '</div></div>';
         }
 
         function addProductRow() {
@@ -1321,7 +1075,7 @@
                 });
                 html = '<ul class="list-group">' + liItems + '</ul>';
             }
-            container.innerHTML = '<div class="card border-info shadow-sm"><div class="card-header bg-info text-dark fw-bold">♻️ Restore Bin (' + currentBranch + ')</div><div class="card-body">' + html + '</div></div>';
+            container.innerHTML = '<div class="card border-info shadow-sm"><div class="card-header bg-info text-dark fw-bold">♻️ Restore Bin</div><div class="card-body">' + html + '</div></div>';
         }
 
         function renderYearRegister(yearNum) {
@@ -1354,7 +1108,7 @@
             let grandP = 0, grandPV = 0, grandPTD = 0, grandCD = 0, grandCumD = 0, grandCV = 0, grandNew = 0, grandDisposed = 0;
 
             yearData.forEach((group, gIdx) => {
-                html += '<tr class="category-header"><td colspan="13">' + group.cat + ' (' + currentBranch + ')</td></tr>';
+                html += '<tr class="category-header"><td colspan="13">' + group.cat + '</td></tr>';
                 let tPrice = 0, tPrevVal = 0, tPrevTotDep = 0, tCurrDep = 0, tCumDep = 0, tCurrVal = 0, tNewBuy = 0, tDisposed = 0;
 
                 group.items.forEach((item, iIdx) => {
@@ -1406,7 +1160,7 @@
             });
 
             html += '<tr class="grand-total-row">' +
-                '<td colspan="3" class="text-end">সর্বমোট (' + currentBranch + ')ঃ</td>' +
+                '<td colspan="3" class="text-end">সর্বমোটঃ</td>' +
                 '<td>' + formatVal(grandP) + '</td><td>' + formatVal(grandNew) + '</td><td>' + formatVal(grandDisposed) + '</td>' +
                 '<td>' + formatVal(grandPV) + '</td><td>' + formatVal(grandPTD) + '</td><td>-</td>' +
                 '<td>' + formatVal(grandCD) + '</td><td>' + formatVal(grandCumD) + '</td><td>' + formatVal(grandCV) + '</td>' +
@@ -1481,7 +1235,7 @@
             let r8 = totalLossYears.map(function(val) { return '<td>' + formatVal(val) + '</td>'; }).join('');
 
             container.innerHTML = '<div class="card border-warning shadow-sm mb-4">' +
-                '<div class="card-header bg-warning text-dark fw-bold"><span>📊 স্থায়ী সম্পদ সমাপনী ও অবচয় সামারি রিপোর্ট (Summary Report) - [' + currentBranch + ']</span></div>' +
+                '<div class="card-header bg-warning text-dark fw-bold"><span>📊 স্থায়ী সম্পদ সমাপনী ও অবচয় সামারি রিপোর্ট (Summary Report)</span></div>' +
                 '<div class="card-body bg-light">' +
                     '<div class="table-responsive">' +
                         '<table class="table table-bordered align-middle text-center bg-white">' +
@@ -1582,10 +1336,14 @@
             let url = URL.createObjectURL(blob);
             let a = document.createElement('a'); 
             a.href = url; 
-            a.download = 'CCDA_Asset_Register_' + currentBranch + '.html'; 
+            a.download = 'CCDA_Asset_Register.html'; 
             a.click();
             URL.revokeObjectURL(url);
         }
+
+        // ইনিশিয়লাইজেশন
+        initData();
+        setActiveTab(1);
     </script>
 </body>
 </html>
